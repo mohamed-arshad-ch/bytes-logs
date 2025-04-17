@@ -48,7 +48,7 @@ import { ConfirmationModal } from "@/app/components/ui/confirmation-modal"
 
 // Import the currency utility
 import { formatCurrency } from "@/lib/utils-currency"
-
+import { AddButton } from "@/app/components/ui/floating-action-button"
 // Transaction type definition
 type Transaction = {
   id: number
@@ -403,13 +403,13 @@ export default function AdminTransactions() {
         <div className="mb-6">
           <div className="flex justify-between items-center mb-2">
             <h1 className="text-2xl font-bold text-gray-900 font-poppins">Transactions</h1>
-            <Link
+            {/* <Link
               href="/admin/transactions/create"
               className="bg-[#3A86FF] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#3A86FF]/90 transition-colors font-poppins"
             >
               <Plus className="w-4 h-4" />
               Create Transaction
-            </Link>
+            </Link> */}
           </div>
           <p className="text-gray-600 font-poppins">Manage your financial transactions</p>
         </div>
@@ -875,7 +875,7 @@ export default function AdminTransactions() {
           </div>
         )}
       </main>
-
+<AddButton/>
       <BottomNavigation />
 
       {/* Confirmation Modal */}

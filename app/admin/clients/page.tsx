@@ -31,7 +31,7 @@ import { Toast } from "@/app/components/ui/toast"
 import { getClients, deleteClient, type Client, createClientPortalAccess } from "@/app/actions/client-actions"
 import { ConfirmationModal } from "@/app/components/ui/confirmation-modal"
 import { CredentialsModal } from "@/app/components/ui/credentials-modal"
-
+import { AddButton } from "@/app/components/ui/floating-action-button"
 export default function AdminClients() {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
@@ -251,13 +251,13 @@ export default function AdminClients() {
         <div className="mb-6">
           <div className="flex justify-between items-center mb-2">
             <h1 className="text-2xl font-bold text-gray-900 font-poppins">Client Management</h1>
-            <Link
+            {/* <Link
               href="/admin/clients/add"
               className="bg-[#3A86FF] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#3A86FF]/90 transition-colors font-poppins"
             >
               <Plus className="w-4 h-4" />
               Add New Client
-            </Link>
+            </Link> */}
           </div>
           <p className="text-gray-600 font-poppins">Manage your client relationships</p>
         </div>
@@ -767,6 +767,8 @@ export default function AdminClients() {
         confirmText="Delete Client"
         type="danger"
       />
+
+      <AddButton/>
     </div>
   )
 }

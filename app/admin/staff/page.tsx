@@ -31,7 +31,7 @@ import { CredentialsModal } from "@/app/components/ui/credentials-modal"
 import { createStaffPortalAccess } from "@/app/actions/staff-actions"
 import { ConfirmationModal } from "@/app/components/ui/confirmation-modal"
 import Loading from "./loading"
-
+import { AddButton } from "@/app/components/ui/floating-action-button"
 // Staff type definition
 type Staff = {
   id: number
@@ -429,13 +429,13 @@ export default function AdminStaff() {
             <h1 className="text-2xl font-bold text-gray-900 font-poppins">Staff Management</h1>
             <p className="text-gray-600 font-poppins">Manage your team members and their access</p>
           </div>
-          <button
+          {/* <button
             onClick={handleAddStaff}
             className="bg-[#3A86FF] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#3A86FF]/90 transition-colors font-poppins"
           >
             <Plus className="w-4 h-4" />
             Add Staff Member
-          </button>
+          </button> */}
         </div>
 
         {/* Filters and Search */}
@@ -782,7 +782,7 @@ export default function AdminStaff() {
         username={portalCredentials.username}
         password={portalCredentials.password}
       />
-
+<AddButton/>
       <BottomNavigation />
     </div>
   )

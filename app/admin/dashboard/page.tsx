@@ -7,7 +7,7 @@ import { ArrowUpRight, DollarSign, FileText, TrendingUp, User, Users, BookOpen }
 import DashboardHeader from "@/app/components/dashboard/header"
 import BottomNavigation from "@/app/components/dashboard/bottom-navigation"
 import { Chart, registerables } from "chart.js"
-
+import { AddButton } from "@/app/components/ui/floating-action-button"
 // Import the currency utility
 import { formatCurrency } from "@/lib/utils-currency"
 
@@ -219,7 +219,7 @@ export default function AdminDashboard() {
           </Link>
         </div>
       </main>
-
+<AddButton/>
       <BottomNavigation />
     </div>
   )

@@ -31,7 +31,7 @@ import { Toast } from "@/app/components/ui/toast"
 import { filterProducts, searchProducts, deleteProduct, type Product, getAllProducts } from "@/lib/db-service"
 import { formatCurrency } from "@/lib/utils-currency"
 import { ConfirmationModal } from "@/app/components/ui/confirmation-modal"
-
+import { AddButton } from "@/app/components/ui/floating-action-button"
 export default function AdminProducts() {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
@@ -247,13 +247,13 @@ export default function AdminProducts() {
             <h1 className="text-2xl font-bold text-gray-900 font-poppins">Products & Services</h1>
             <p className="text-gray-600 font-poppins">Manage your catalog</p>
           </div>
-          <button
+          {/* <button
             onClick={handleAddProduct}
             className="bg-[#3A86FF] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#3A86FF]/90 transition-colors font-poppins"
           >
             <Plus className="w-4 h-4" />
             Add New Product
-          </button>
+          </button> */}
         </div>
 
         {/* Filters and Search */}
@@ -812,7 +812,7 @@ export default function AdminProducts() {
 
       {/* Toast Notification */}
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-
+<AddButton/>
       <BottomNavigation />
     </div>
   )

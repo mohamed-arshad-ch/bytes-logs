@@ -31,7 +31,7 @@ import BottomNavigation from "@/app/components/dashboard/bottom-navigation"
 import { Toast } from "@/app/components/ui/toast"
 import { getCurrentMonthSummary, getLedgerYearlySummary } from "@/app/actions/ledger-actions"
 import { formatCurrency } from "@/lib/utils-currency"
-
+import { AddButton } from "@/app/components/ui/floating-action-button"
 // Type definitions
 type LedgerEntry = {
   id: number
@@ -292,7 +292,7 @@ export default function AdminLedger() {
             <h1 className="text-2xl font-bold text-gray-900 font-poppins">Financial Ledger</h1>
             <p className="text-gray-600 font-poppins">Track and manage all financial transactions</p>
           </div>
-          <div className="flex gap-2">
+          {/* <div className="flex gap-2">
             <button
               onClick={refreshData}
               className="bg-gray-100 text-gray-700 px-4 py-2 rounded-md flex items-center gap-2 hover:bg-gray-200 transition-colors font-poppins"
@@ -307,7 +307,7 @@ export default function AdminLedger() {
               <Download className="w-4 h-4" />
               Export Ledger
             </button>
-          </div>
+          </div> */}
         </div>
 
         {/* Current Month Summary */}
@@ -773,7 +773,7 @@ export default function AdminLedger() {
 
       {/* Toast Notification */}
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-
+<AddButton/>
       <BottomNavigation />
     </div>
   )
