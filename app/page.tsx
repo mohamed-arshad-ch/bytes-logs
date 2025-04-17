@@ -27,7 +27,7 @@ export default function Home() {
           {/* Navigation Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Admin Login Card */}
-            <Link href="/admin/login" className="group">
+            {/* <Link href="/admin/login" className="group">
               <div className="bg-white rounded-lg p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 h-full flex flex-col">
                 <div className="w-12 h-12 rounded-full bg-[#3A86FF]/10 flex items-center justify-center mb-4">
                   <ShieldCheck className="w-6 h-6 text-[#3A86FF]" />
@@ -41,10 +41,10 @@ export default function Home() {
                   <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </div>
               </div>
-            </Link>
+            </Link> */}
 
             {/* Staff Login Card */}
-            <Link href="/staff/login" className="group">
+            {/* <Link href="/staff/login" className="group">
               <div className="bg-white rounded-lg p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 h-full flex flex-col">
                 <div className="w-12 h-12 rounded-full bg-[#8338EC]/10 flex items-center justify-center mb-4">
                   <Users className="w-6 h-6 text-[#8338EC]" />
@@ -58,10 +58,10 @@ export default function Home() {
                   <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </div>
               </div>
-            </Link>
+            </Link> */}
 
             {/* Client Login Card */}
-            <Link href="/client/login" className="group">
+            {/* <Link href="/client/login" className="group">
               <div className="bg-white rounded-lg p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 h-full flex flex-col">
                 <div className="w-12 h-12 rounded-full bg-[#FF006E]/10 flex items-center justify-center mb-4">
                   <User className="w-6 h-6 text-[#FF006E]" />
@@ -75,10 +75,10 @@ export default function Home() {
                   <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </div>
               </div>
-            </Link>
+            </Link> */}
 
             {/* Registration Card */}
-            <Link href="/register" className="group">
+            {/* <Link href="/register" className="group">
               <div className="bg-white rounded-lg p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 h-full flex flex-col">
                 <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-4">
                   <UserPlus className="w-6 h-6 text-gray-700" />
@@ -92,7 +92,7 @@ export default function Home() {
                   <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </div>
               </div>
-            </Link>
+            </Link> */}
           </div>
         </div>
       </main>
