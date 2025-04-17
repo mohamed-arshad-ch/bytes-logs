@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Calendar, Download, Eye, ChevronLeft, ChevronRight, FileText, X, Loader2 } from "lucide-react"
+import { Download, Eye, ChevronLeft, ChevronRight, FileText, X, Loader2 } from "lucide-react"
 import ClientDashboardHeader from "@/app/components/dashboard/client-header"
 import ClientBottomNavigation from "@/app/components/dashboard/client-bottom-navigation"
 import { formatCurrency } from "@/lib/utils-currency"
@@ -29,23 +29,46 @@ const getWeekDateRange = (year: number, month: number, weekIndex: number) => {
   startDate.setHours(0, 0, 0, 0)
 
   // Calculate the end date (Saturday of the same week)
-  // Monday + 5 days = Saturday (ensuring we include all 6 days)
   const endDate = new Date(startDate)
   endDate.setDate(startDate.getDate() + 5) // 5 days after Monday is Saturday
 
   // Set time to end of day to ensure we capture all transactions
   endDate.setHours(23, 59, 59, 999)
 
+  // Calculate the week number within the month
+  const weekNumber = getWeekNumberInMonth(startDate, month)
+
   return {
     start: startDate,
     end: endDate,
     label: `${startDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })} - ${endDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`,
     belongsToMonth: belongsToMonth(startDate, endDate, month),
+    weekNumber,
   }
 }
 
+// Helper function to get the week number within the month
+const getWeekNumberInMonth = (date: Date, month: number) => {
+  const firstDayOfMonth = new Date(date.getFullYear(), month, 1)
+  const firstMondayOfMonth = new Date(firstDayOfMonth)
+
+  // Find the first Monday of the month
+  while (firstMondayOfMonth.getDay() !== 1) {
+    firstMondayOfMonth.setDate(firstMondayOfMonth.getDate() + 1)
+  }
+
+  // If the first Monday is in the next month, use the last Monday of the previous month
+  if (firstMondayOfMonth.getMonth() !== month) {
+    firstMondayOfMonth.setDate(firstMondayOfMonth.getDate() - 7)
+  }
+
+  // Calculate the difference in weeks
+  const diffInTime = date.getTime() - firstMondayOfMonth.getTime()
+  const diffInDays = diffInTime / (1000 * 3600 * 24)
+  return Math.floor(diffInDays / 7) + 1
+}
+
 // Helper function to determine if a week belongs to a month
-// (if majority of days fall within the month)
 const belongsToMonth = (startDate: Date, endDate: Date, month: number) => {
   let daysInMonth = 0
   const currentDate = new Date(startDate)
@@ -86,6 +109,7 @@ export default function ClientInvoices() {
   const [showTransactionDetails, setShowTransactionDetails] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [downloadingInvoice, setDownloadingInvoice] = useState<number | null>(null)
+  const [monthTransitioning, setMonthTransitioning] = useState(false)
 
   // Month navigation state
   const [currentDate, setCurrentDate] = useState(new Date())
@@ -120,7 +144,10 @@ export default function ClientInvoices() {
   // Re-process weekly data when month changes
   useEffect(() => {
     if (transactions.length > 0) {
+      setMonthTransitioning(true)
       processWeeklyData(transactions)
+      // Add a small delay to show the transition effect
+      setTimeout(() => setMonthTransitioning(false), 300)
     }
   }, [currentMonth, currentYear, transactions])
 
@@ -168,6 +195,7 @@ export default function ClientInvoices() {
 
         weeksData.push({
           index: i,
+          weekNumber: weekRange.weekNumber,
           dateRange: weekRange,
           transactions: weekTransactions,
           totalAmount: totalAmount,
@@ -257,7 +285,7 @@ export default function ClientInvoices() {
           <p className="text-gray-600 font-poppins">View and download your weekly invoices</p>
         </div>
 
-        {/* Month Navigation */}
+        {/* Month Navigation - Removed calendar icon */}
         <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-100 mb-6">
           <div className="flex items-center justify-between">
             <button
@@ -268,8 +296,10 @@ export default function ClientInvoices() {
               <ChevronLeft className="h-5 w-5 text-gray-700" />
             </button>
 
-            <div className="flex items-center">
-              <Calendar className="h-8 w-8 text-[#3A86FF] mr-3" />
+            <div className="flex items-center justify-center">
+              {monthTransitioning ? (
+                <div className="w-5 h-5 border-2 border-[#3A86FF] border-t-transparent rounded-full animate-spin mr-2"></div>
+              ) : null}
               <h2 className="text-xl font-semibold text-gray-900 font-poppins">{getMonthYearString(currentDate)}</h2>
             </div>
 
@@ -292,31 +322,52 @@ export default function ClientInvoices() {
 
         {/* Weekly Breakdown */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-          {weeklyData.length === 0 ? (
+          {monthTransitioning ? (
+            // Show skeleton loaders during month transition
+            Array.from({ length: 3 }).map((_, index) => (
+              <div key={index} className="bg-white rounded-lg shadow-sm border border-gray-100 p-5 animate-pulse">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex items-center">
+                    <div className="w-2 h-10 bg-gray-200 rounded-full mr-2"></div>
+                    <div>
+                      <div className="h-5 bg-gray-200 rounded w-24 mb-2"></div>
+                      <div className="h-4 bg-gray-200 rounded w-32"></div>
+                    </div>
+                  </div>
+                </div>
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="h-4 bg-gray-200 rounded w-20"></div>
+                    <div className="h-4 bg-gray-200 rounded w-16"></div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="h-4 bg-gray-200 rounded w-24"></div>
+                    <div className="h-4 bg-gray-200 rounded w-8"></div>
+                  </div>
+                </div>
+                <div className="h-10 bg-gray-200 rounded mt-4"></div>
+              </div>
+            ))
+          ) : weeklyData.length === 0 ? (
             <div className="col-span-full bg-white rounded-lg shadow-sm p-8 text-center">
-              <Calendar className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+              <FileText className="h-12 w-12 text-gray-300 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 font-poppins mb-2">No Invoices Available</h3>
-              <p className="text-gray-500 font-poppins">There are no invoices for this month.</p>
+              <p className="text-gray-500 font-poppins">There are no invoices for {getMonthYearString(currentDate)}.</p>
             </div>
           ) : (
             weeklyData.map((week) => (
               <div
                 key={week.index}
-                className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all duration-300 transform hover:-translate-y-1"
+                className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all duration-300"
               >
                 <div className="p-5">
                   <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <div className="flex items-center">
-                        <span className="w-2 h-10 bg-[#3A86FF] rounded-full mr-2"></span>
-                        <div>
-                          <h3 className="font-medium text-gray-900 font-poppins text-lg">Week {week.index + 1}</h3>
-                          <p className="text-sm text-gray-500 font-poppins">{week.dateRange.label}</p>
-                        </div>
+                    <div className="flex items-center">
+                      <span className="w-2 h-10 bg-[#3A86FF] rounded-full mr-2"></span>
+                      <div>
+                        <h3 className="font-medium text-gray-900 font-poppins text-lg">Week {week.weekNumber}</h3>
+                        <p className="text-sm text-gray-500 font-poppins">{week.dateRange.label}</p>
                       </div>
-                    </div>
-                    <div className="p-2 bg-blue-50 rounded-md">
-                      <Calendar className="h-5 w-5 text-[#3A86FF]" />
                     </div>
                   </div>
 
@@ -330,31 +381,68 @@ export default function ClientInvoices() {
                       <span className="text-gray-900 font-poppins">{week.transactions.length}</span>
                     </div>
                   </div>
-                </div>
 
-                <div className="border-t border-gray-100 p-4 bg-gray-50 flex justify-between">
-                  <button
-                    onClick={() => handleViewTransactions(week)}
-                    className="p-2 rounded-full bg-[#3A86FF] text-white hover:bg-[#3A86FF]/90 transition-colors"
-                    disabled={week.transactions.length === 0}
-                    aria-label="View Transactions"
-                    title="View Transactions"
-                  >
-                    <Eye className="w-5 h-5" />
-                  </button>
-                  <button
-                    onClick={() => handleDownloadInvoice(week)}
-                    className="p-2 rounded-full bg-[#8338EC] text-white hover:bg-[#8338EC]/90 transition-colors"
-                    disabled={downloadingInvoice === week.index || week.transactions.length === 0}
-                    aria-label="Download Invoice"
-                    title="Download Invoice"
-                  >
-                    {downloadingInvoice === week.index ? (
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                    ) : (
-                      <Download className="w-5 h-5" />
-                    )}
-                  </button>
+
+                  <div className="border-t border-gray-100 p-4 bg-gray-50 flex justify-end space-x-3">
+                    <button
+                      onClick={() => handleViewTransactions(week)}
+                      className="p-2 rounded-full bg-blue-50 text-[#3A86FF] hover:bg-blue-100 transition-colors"
+                      aria-label="View details"
+                    >
+                      <Eye className="w-8 h-8" />
+                    </button>
+                   
+                    <button
+                      onClick={() => handleDownloadInvoice(week)}
+                      className="p-2 rounded-full bg-green-50 text-green-600 hover:bg-green-100 transition-colors"
+                      aria-label="Download invoice"
+                      disabled={downloadingInvoice === week.index || week.transactions.length === 0}
+                    >
+                      {downloadingInvoice === week.index ? (
+                        <Loader2 className="w-8 h-8 animate-spin" />
+                      ) : (
+                        <Download className="w-8 h-8" />
+                      )}
+                    </button>
+                  </div>
+
+
+                  {/* Redesigned action buttons to match product page style */}
+                  {/* <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+                    <button
+                      onClick={() => handleViewTransactions(week)}
+                      className={`flex items-center justify-center px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                        week.transactions.length === 0
+                          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                          : "bg-[#3A86FF] text-white hover:bg-[#3A86FF]/90"
+                      }`}
+                      disabled={week.transactions.length === 0}
+                    >
+                      <Eye className="w-4 h-4 mr-2" />
+                      View Details
+                    </button>
+                    <button
+                      onClick={() => handleDownloadInvoice(week)}
+                      className={`flex items-center justify-center px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                        downloadingInvoice === week.index || week.transactions.length === 0
+                          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                          : "bg-[#8338EC] text-white hover:bg-[#8338EC]/90"
+                      }`}
+                      disabled={downloadingInvoice === week.index || week.transactions.length === 0}
+                    >
+                      {downloadingInvoice === week.index ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Downloading...
+                        </>
+                      ) : (
+                        <>
+                          <Download className="w-4 h-4 mr-2" />
+                          Download
+                        </>
+                      )}
+                    </button>
+                  </div> */}
                 </div>
               </div>
             ))
@@ -389,14 +477,19 @@ export default function ClientInvoices() {
                       <p className="font-medium text-gray-900 font-poppins">Total: {selectedWeek.formattedTotal}</p>
                       <button
                         onClick={() => handleDownloadInvoice(selectedWeek)}
-                        className="p-2 rounded-full bg-[#8338EC] text-white hover:bg-[#8338EC]/90 transition-colors"
+                        className="flex items-center px-3 py-1 rounded-md bg-[#8338EC] text-white hover:bg-[#8338EC]/90 transition-colors text-sm"
                         disabled={downloadingInvoice === selectedWeek.index}
-                        aria-label="Download Invoice"
                       >
                         {downloadingInvoice === selectedWeek.index ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <>
+                            <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                            Downloading...
+                          </>
                         ) : (
-                          <Download className="w-4 h-4" />
+                          <>
+                            <Download className="w-4 h-4 mr-1" />
+                            Download Invoice
+                          </>
                         )}
                       </button>
                     </div>
